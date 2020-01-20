@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  database:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: kpidbuser
+      POSTGRES_PASSWORD: kpidbpass
+      POSTGRES_DB: kpidb
+    networks:
+      - backend
+    volumes:
+      - "data:/var/lib/postgresql/data"
+
+  local:
+    image: kpitracker
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    networks:
+      - frontend
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  data:
